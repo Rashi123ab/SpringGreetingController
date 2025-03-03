@@ -1,4 +1,5 @@
 package com.example.GreetingController.controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import com.example.GreetingController.service.GreetingServices;
@@ -10,14 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/greet")
 public class GreetingController {
     private final GreetingServices greetingService;
-
+@Autowired
     public GreetingController(GreetingServices greetingService) {
         this.greetingService = greetingService;
     }
 
     @GetMapping
-    public String getGreet() { //UC2
-        return greetingService.getGreetMessage();
+    public String getGreet(  //UC3
+        @RequestParam(required = false) String firstName,
+        @RequestParam(required = false) String lastName){
+            return greetingService.getGreetMessage(firstName, lastName);
     }
 
 
