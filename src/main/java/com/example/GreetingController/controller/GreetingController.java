@@ -1,18 +1,34 @@
 package com.example.GreetingController.controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
+import com.example.GreetingController.service.GreetingServices;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/greet")
 public class GreetingController {
+    private final GreetingServices greetingService;
 
-    // GET Method
-    @GetMapping
-    public Map<String, String> getGreeting() {
-        return Map.of("message", "Hello!! This is a GET request.");
+    public GreetingController(GreetingServices greetingService) {
+        this.greetingService = greetingService;
     }
-    //tested get method using Curl command--  curl http://localhost:8080/greet
 
+    @GetMapping
+    public String getGreet() { //UC2
+        return greetingService.getGreetMessage();
+    }
+
+
+
+
+//    // GET Method
+//    @GetMapping
+//    public Map<String, String> getGreeting() {
+//        return Map.of("message", "Hello!! This is a GET request.");
+//    }
+    //tested get method using Curl command--  curl http://localhost:8080/greet
     // POST Method
     @PostMapping
     public Map<String, String> postGreeting(@RequestBody(required = false) Map<String, String> body) {
