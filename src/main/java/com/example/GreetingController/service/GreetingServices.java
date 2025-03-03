@@ -19,4 +19,9 @@ public class GreetingServices{
     public List<Greeting> getAllGreetings() {
           return greetingRepository.findAll();
     }
+    // New method to find a Greeting by IDs
+    public Greeting getGreetingById(Long id) {
+        return greetingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("not found with ID: " + id));
+    }
 }

@@ -13,10 +13,11 @@ import com.example.GreetingController.model.Greeting;
 @RequestMapping("/greet")
 public class GreetingController {
     private final GreetingServices greetingService;
-@Autowired
+
+    @Autowired
     public GreetingController(GreetingServices greetingService) {
-    this.greetingService = greetingService;
-}
+        this.greetingService = greetingService;
+    }
 
     @PostMapping("/save")
     public Greeting saveGreeting(@RequestParam String message) {
@@ -27,4 +28,13 @@ public class GreetingController {
     public List<Greeting> getAllGreetings() {
         return greetingService.getAllGreetings();
     }
+
+    //http://localhost:8080/greet/save?message=Hello&&message=Rashi
+    //http://localhost:8080/greet/all
+
+    @GetMapping("/{id}")
+    public Greeting getGreetingById(@PathVariable Long id) {
+        return greetingService.getGreetingById(id);
     }
+    //to fetch msg with id:2----http://localhost:8080/greet/2
+}
