@@ -2,7 +2,6 @@ package com.example.GreetingController.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Map;
 import com.example.GreetingController.service.GreetingServices;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +31,15 @@ public class GreetingController {
     //http://localhost:8080/greet/save?message=Hello&&message=Rashi
     //http://localhost:8080/greet/all
 
-//    @GetMapping("/{id}")
-//    public Greeting getGreetingById(@PathVariable Long id) {
-//        return greetingService.getGreetingById(id);
-//    }
+    @GetMapping("/{id}")
+    public Greeting getGreetingById(@PathVariable Long id) {
+        return greetingService.getGreetingById(id);
+    }
     //to fetch msg with id:2----http://localhost:8080/greet/2
+
+    @PutMapping("/update/{id}")
+    public Greeting updateGreeting(@PathVariable Long id, @RequestParam String message) {
+        return greetingService.updateGreeting(id, message);
+    }
+    //http://localhost:8080/greet/update/2?message=hi...
 }
