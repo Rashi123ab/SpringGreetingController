@@ -19,15 +19,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // ✅ Disable CSRF (for REST API)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login", "/error").permitAll() // ✅ Allow authentication paths
-                        .requestMatchers("/h2-console/**").permitAll() // ✅ Allow H2 Console
-                        .anyRequest().authenticated() // ✅ Protect other endpoints
+                        .requestMatchers("/auth/register", "/auth/login", "/error").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // ✅ Required for H2 Console
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS)) // ✅ Use JWT instead of sessions
-                .httpBasic(httpBasic -> httpBasic.disable()); // ✅ Disable default Basic Auth
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS)) //  Use JWT instead of sessions
+                .httpBasic(httpBasic -> httpBasic.disable()); // Disable default Basic Auth
 
         return http.build();
     }
