@@ -15,16 +15,19 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // ✅ Disable CSRF (for REST API)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/auth/register", "/auth/login", "/error").permitAll() // ✅ Allow authentication paths
+                        .requestMatchers("/h2-console/**").permitAll() // ✅ Allow H2 Console
+                        .anyRequest().authenticated() // ✅ Protect other endpoints
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
+                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // ✅ Required for H2 Console
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS)) // ✅ Use JWT instead of sessions
+                .httpBasic(httpBasic -> httpBasic.disable()); // ✅ Disable default Basic Auth
 
         return http.build();
     }
