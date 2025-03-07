@@ -5,10 +5,12 @@ import com.example.GreetingController.model.AuthUser;
 import com.example.GreetingController.repository.AuthUserRepository;
 import com.example.GreetingController.security.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ public class AuthService {
     private final AuthUserRepository authUserRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
+    private final EmailService emailService;
 
 
     public String registerUser(AuthUserDTO userDTO) {
@@ -74,4 +77,47 @@ public class AuthService {
         mailSender.send(message);
         System.out.println("Login notification email sent to: " + email);
     }
+    public void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
+    }
+public String forgotPassword(String email, String newPassword) {
+    Optional<AuthUser> userOptional = authUserRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sorry! We cannot find the user email: " + email);
+    }
+
+    AuthUser user = userOptional.get();
+    user.setPassword(passwordEncoder.encode(newPassword));
+    authUserRepository.save(user);
+
+    // Send Email Notification
+    emailService.sendEmail(email, "Password Changed", "Your password has been successfully updated.");
+
+    return "Password has been changed successfully!";
 }
+
+    // 🔹 Reset Password Logic
+    public String resetPassword(String email, String currentPassword, String newPassword) {
+        Optional<AuthUser> userOptional = authUserRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with email: " + email);
+        }
+
+        AuthUser user = userOptional.get();
+
+        // Validate current password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Current password is incorrect!");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        authUserRepository.save(user);
+
+        return "Password reset successfully!";
+    }
+}
+
