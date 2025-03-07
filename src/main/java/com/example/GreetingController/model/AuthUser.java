@@ -13,7 +13,7 @@ import lombok.*;
 public class AuthUser {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)//relational DB
     private Long id;
 
     @NotBlank(message = "First name is required")
@@ -23,9 +23,10 @@ public class AuthUser {
     private String lastName;
 
     @Email(message = "Invalid email format")
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @NotBlank(message = "Password is required")
+    @Column(nullable = false)
     private String password;
 }
